@@ -1,14 +1,25 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import { supabase } from '../../lib/supabase';
 import styles from '../../styles/AdminEvent.module.css';
 
 export default function AdminEvent() {
+  const router = useRouter();
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const isAdmin = sessionStorage.getItem('isAdmin');
+      if (isAdmin !== 'true') {
+        router.push('/admin/login');
+      }
+    }
+  }, [router]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,7 +55,7 @@ export default function AdminEvent() {
   return (
     <div className={styles.container}>
       <h1>Create New Event</h1>
-      <form onSubmit={handleSubmit} className={styles.form}>
+      <form className={styles.form} onSubmit={handleSubmit}>
         <div className={styles.formGroup}>
           <label htmlFor="title">Event Title</label>
           <input
