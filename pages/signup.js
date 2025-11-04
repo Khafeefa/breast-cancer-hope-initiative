@@ -4,6 +4,8 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 
 export default function Signup() {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -14,15 +16,40 @@ export default function Signup() {
     e.preventDefault();
     setLoading(true);
     setMessage('');
+
+    // Validate ASU email
+    if (!email.endsWith('@asu.edu')) {
+      setMessage('Please use a valid ASU email address (@asu.edu)');
+      setLoading(false);
+      return;
+    }
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
     });
+
     if (error) {
       setMessage(error.message);
-    } else {
-      setMessage('Account created successfully! Redirecting...');
-      setTimeout(() => router.push('/'), 2000);
+    } else if (data.user) {
+      // Store additional profile information
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert([
+          {
+            id: data.user.id,
+            first_name: firstName,
+            last_name: lastName,
+            email: email,
+          },
+        ]);
+
+      if (profileError) {
+        setMessage('Account created but profile setup failed: ' + profileError.message);
+      } else {
+        setMessage('Account created successfully! Redirecting...');
+        setTimeout(() => router.push('/'), 2000);
+      }
     }
     setLoading(false);
   };
@@ -36,17 +63,38 @@ export default function Signup() {
         <div style={styles.card}>
           <h1 style={styles.title}>Create Account</h1>
           <p style={styles.subtitle}>Join Breast Cancer Hope Initiative</p>
-
           <form onSubmit={handleSignup} style={styles.form}>
             <div style={styles.inputGroup}>
-              <label style={styles.label}>Email</label>
+              <label style={styles.label}>First Name</label>
+              <input
+                type="text"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+                style={styles.input}
+                placeholder="Enter your first name"
+              />
+            </div>
+            <div style={styles.inputGroup}>
+              <label style={styles.label}>Last Name</label>
+              <input
+                type="text"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+                style={styles.input}
+                placeholder="Enter your last name"
+              />
+            </div>
+            <div style={styles.inputGroup}>
+              <label style={styles.label}>ASU Email</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 style={styles.input}
-                placeholder="Enter your email"
+                placeholder="Enter your ASU email (@asu.edu)"
               />
             </div>
             <div style={styles.inputGroup}>
@@ -68,21 +116,19 @@ export default function Signup() {
               {loading ? 'Creating Account...' : 'Sign Up'}
             </button>
           </form>
-
           {message && (
             <p
               style={{
                 ...styles.message,
-                backgroundColor: message.includes('error')
+                backgroundColor: message.includes('error') || message.includes('failed')
                   ? '#ffdddd'
                   : '#ddffdd',
-                color: message.includes('error') ? '#cc0000' : '#00aa00',
+                color: message.includes('error') || message.includes('failed') ? '#cc0000' : '#00aa00',
               }}
             >
               {message}
             </p>
           )}
-
           <div style={styles.footer}>
             Already have an account?{' '}
             <a href="/login" style={styles.link}>
