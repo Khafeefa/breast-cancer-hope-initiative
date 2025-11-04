@@ -1,3 +1,4 @@
+// Login component - No email confirmation required
 import { useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useRouter } from 'next/router';
@@ -14,12 +15,10 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     setMessage('');
-
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
-
     if (error) {
       setMessage(error.message);
     } else {
@@ -38,7 +37,7 @@ export default function Login() {
         <div style={styles.card}>
           <h1 style={styles.title}>Welcome Back</h1>
           <p style={styles.subtitle}>Login to Breast Cancer Hope Initiative</p>
-          
+
           <form onSubmit={handleLogin} style={styles.form}>
             <div style={styles.inputGroup}>
               <label style={styles.label}>Email</label>
@@ -51,7 +50,6 @@ export default function Login() {
                 placeholder="Enter your email"
               />
             </div>
-            
             <div style={styles.inputGroup}>
               <label style={styles.label}>Password</label>
               <input
@@ -63,34 +61,35 @@ export default function Login() {
                 placeholder="Enter your password"
               />
             </div>
-
-            {message && (
-              <div style={{
-                ...styles.message,
-                backgroundColor: message.includes('successful') ? '#ffc0cb' : '#ffe0e0',
-                color: message.includes('successful') ? '#c71585' : '#d32f2f'
-              }}>
-                {message}
-              </div>
-            )}
-
             <button
               type="submit"
               disabled={loading}
-              style={{
-                ...styles.button,
-                opacity: loading ? 0.7 : 1,
-                cursor: loading ? 'not-allowed' : 'pointer'
-              }}
+              style={styles.button}
             >
               {loading ? 'Logging in...' : 'Log In'}
             </button>
           </form>
 
-          <p style={styles.footer}>
+          {message && (
+            <p
+              style={{
+                ...styles.message,
+                backgroundColor: message.includes('error')
+                  ? '#ffdddd'
+                  : '#ddffdd',
+                color: message.includes('error') ? '#cc0000' : '#00aa00',
+              }}
+            >
+              {message}
+            </p>
+          )}
+
+          <div style={styles.footer}>
             Don't have an account?{' '}
-            <a href="/signup" style={styles.link}>Sign Up</a>
-          </p>
+            <a href="/signup" style={styles.link}>
+              Sign Up
+            </a>
+          </div>
         </div>
       </div>
     </>
@@ -99,27 +98,25 @@ export default function Login() {
 
 const styles = {
   container: {
-    minHeight: '100vh',
     display: 'flex',
-    alignItems: 'center',
     justifyContent: 'center',
-    background: 'linear-gradient(135deg, #ffc0cb 0%, #ffffff 50%, #ffc0cb 100%)',
-    padding: '20px',
+    alignItems: 'center',
+    minHeight: '100vh',
+    backgroundColor: '#fff5f7',
   },
   card: {
     backgroundColor: '#ffffff',
     borderRadius: '12px',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
     padding: '40px',
-    boxShadow: '0 8px 24px rgba(199, 21, 133, 0.15)',
-    maxWidth: '450px',
     width: '100%',
+    maxWidth: '400px',
   },
   title: {
     fontSize: '28px',
     fontWeight: 'bold',
-    color: '#c71585',
+    color: '#333',
     marginBottom: '10px',
-    textAlign: 'center',
   },
   subtitle: {
     fontSize: '16px',
