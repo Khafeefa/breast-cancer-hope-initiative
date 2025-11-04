@@ -53,9 +53,24 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="admin-dashboard" style={{ padding: '2rem', minHeight: '100vh', backgroundColor: '#fff' }}>
-      {/* Home Button */}
-      <div style={{ position: 'fixed', top: '20px', right: '20px', zIndex: 1000 }}>
+    <div className="admin-dashboard" style={{ padding: '2rem', backgroundColor: '#fff5f8', minHeight: '100vh' }}>
+      {/* Top Navigation Buttons */}
+      <div style={{ position: 'absolute', top: '20px', right: '20px', zIndex: 1000, display: 'flex', gap: '10px' }}>
+        <Link href="/admin/members">
+          <button style={{
+            background: 'linear-gradient(135deg, #c71585, #ffc0cb)',
+            color: 'white',
+            fontSize: '1rem',
+            padding: '10px 20px',
+            border: 'none',
+            borderRadius: '50px',
+            cursor: 'pointer',
+            boxShadow: '0 4px 15px rgba(199, 21, 133, 0.4)',
+            fontWeight: 'bold'
+          }}>
+            👥 Members List
+          </button>
+        </Link>
         <Link href="/">
           <button style={{
             background: 'linear-gradient(135deg, #c71585, #ffc0cb)',
@@ -75,7 +90,7 @@ const AdminDashboard = () => {
 
       <header style={{ marginBottom: '2rem', textAlign: 'center' }}>
         <h1 style={{ color: '#c71585', fontSize: '2.5rem', marginBottom: '0.5rem' }}>Admin Dashboard</h1>
-        <p style={{ color: '#666', fontSize: '1.2rem' }}>Manage volunteer information and track participation</p>
+        <p style={{ color: '#666', fontSize: '1.1rem' }}>Manage volunteer information and track participation</p>
       </header>
       
       <div style={{ marginBottom: '2rem' }}>
@@ -134,9 +149,9 @@ const AdminDashboard = () => {
       
       {/* User Table */}
       <div style={{ overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', borderRadius: '8px', overflow: 'hidden' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: 'white', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }}>
           <thead>
-            <tr style={{ backgroundColor: '#ffc0cb' }}>
+            <tr style={{ backgroundColor: '#fff0f5' }}>
               <th onClick={() => handleSort('id')} style={{ padding: '1rem', textAlign: 'left', cursor: 'pointer', color: '#c71585', fontWeight: 'bold', borderBottom: '2px solid #c71585' }}>
                 ID {sortConfig.key === 'id' && (sortConfig.direction === 'asc' ? '▲' : '▼')}
               </th>
@@ -168,18 +183,19 @@ const AdminDashboard = () => {
                 <td style={{ padding: '1rem', color: '#333' }}>{user.email}</td>
                 <td style={{ padding: '1rem', color: '#333' }}>{user.attendance}</td>
                 <td style={{ padding: '1rem', color: '#333' }}>{user.hours.toFixed(1)} hrs</td>
-                <td style={{ padding: '1rem' }}><span style={{ backgroundColor: '#ffc0cb', color: '#c71585', padding: '0.25rem 0.75rem', borderRadius: '15px', fontSize: '0.875rem', fontWeight: 'bold' }}>{user.role}</span></td>
+                <td style={{ padding: '1rem' }}><span style={{ backgroundColor: '#ffc0cb', color: '#c71585', padding: '0.25rem 0.75rem', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 'bold' }}>{user.role}</span></td>
                 <td style={{ padding: '1rem', color: '#333' }}>{user.joinDate}</td>
               </tr>
             ))}
           </tbody>
         </table>
         {sortedUsers.length === 0 && (
-          <div style={{ textAlign: 'center', padding: '2rem', color: '#c71585', fontSize: '1.2rem' }}>No users found matching your criteria.</div>
+          <div style={{ padding: '2rem', textAlign: 'center', color: '#666', fontSize: '1.1rem' }}>No users found matching your criteria.</div>
         )}
       </div>
-      <footer style={{ marginTop: '2rem', textAlign: 'center', color: '#666', padding: '1rem', borderTop: '2px solid #ffc0cb' }}>
-        <p>Showing {sortedUsers.length} of {users.length} users</p>
+
+      <footer style={{ marginTop: '2rem', textAlign: 'center', padding: '1rem', borderTop: '2px solid #ffc0cb', color: '#666' }}>
+        Showing {sortedUsers.length} of {users.length} users
       </footer>
     </div>
   );
@@ -189,12 +205,13 @@ const AdminDashboard = () => {
 export const AdminDashboardWithAuth = ({ isAdmin = true }) => {
   if (!isAdmin) {
     return (
-      <div style={{ textAlign: 'center', padding: '3rem' }}>
+      <div style={{ padding: '3rem', textAlign: 'center' }}>
         <h2 style={{ color: '#c71585' }}>Access Denied</h2>
         <p style={{ color: '#666' }}>You do not have permission to access the admin dashboard. Admin-only access required.</p>
       </div>
     );
   }
+
   return <AdminDashboard />;
 };
 
