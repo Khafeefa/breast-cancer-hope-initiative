@@ -1,5 +1,6 @@
 // Admin Dashboard Component with User Management
 import React, { useState, useMemo } from 'react';
+import Link from 'next/link';
 import './dashboard.css';
 
 const AdminDashboard = () => {
@@ -52,108 +53,80 @@ const AdminDashboard = () => {
     });
   };
 
-  const handleFilterChange = (filterType, value) => {
-    setFilters(prev => ({
-      ...prev,
-      [filterType]: value,
-    }));
-  };
-
-  const exportToCSV = () => {
-    const headers = ['ID', 'Name', 'Email', 'Attendance', 'Hours', 'Role', 'Join Date'];
-    const rows = sortedUsers.map(user => [
-      user.id,
-      user.name,
-      user.email,
-      user.attendance,
-      user.hours,
-      user.role,
-      user.joinDate,
-    ]);
-
-    const csvContent = [
-      headers.join(','),
-      ...rows.map(row => row.map(cell => `"${cell}"`).join(',')),
-    ].join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `admin_users_${new Date().toISOString().split('T')[0]}.csv`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
-  };
-
   return (
     <div className="admin-dashboard">
+      {/* Home Button */}
+      <div style={{ position: 'fixed', top: '20px', right: '20px', zIndex: 1000 }}>
+        <Link href="/">
+          <button style={{
+            background: 'linear-gradient(135deg, #c71585, #ffc0cb)',
+            color: 'white',
+            fontSize: '1rem',
+            padding: '10px 20px',
+            border: 'none',
+            borderRadius: '50px',
+            cursor: 'pointer',
+            boxShadow: '0 4px 15px rgba(199, 21, 133, 0.4)',
+            fontWeight: 'bold'
+          }}>
+            🏠 Home
+          </button>
+        </Link>
+      </div>
+
       <header className="dashboard-header">
         <h1>Admin Dashboard</h1>
-        <p>Manage users, track attendance, and monitor volunteer hours</p>
+        <p>Manage volunteer information and track participation</p>
       </header>
-
+      
       <div className="controls-section">
+        {/* Search Bar */}
         <div className="search-bar">
           <input
             type="text"
             placeholder="Search by name or email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input"
           />
         </div>
-
+        
+        {/* Filter Controls */}
         <div className="filters">
-          <select
-            value={filters.role}
-            onChange={(e) => handleFilterChange('role', e.target.value)}
-            className="filter-select"
-          >
-            <option value="all">All Roles</option>
-            <option value="volunteer">Volunteers</option>
-            <option value="staff">Staff</option>
-          </select>
-
-          <input
-            type="number"
-            min="0"
-            max="100"
-            placeholder="Min Hours"
-            value={filters.minHours}
-            onChange={(e) => handleFilterChange('minHours', parseFloat(e.target.value) || 0)}
-            className="filter-input"
-          />
-
-          <input
-            type="number"
-            min="0"
-            max="100"
-            placeholder="Max Hours"
-            value={filters.maxHours}
-            onChange={(e) => handleFilterChange('maxHours', parseFloat(e.target.value) || 100)}
-            className="filter-input"
-          />
-
-          <button
-            onClick={() => {
-              setFilters({ role: 'all', minHours: 0, maxHours: 100 });
-              setSearchTerm('');
-            }}
-            className="btn-reset"
-          >
-            Reset Filters
-          </button>
-
-          <button onClick={exportToCSV} className="btn-export">
-            📥 Export to CSV
-          </button>
+          <label>
+            Role:
+            <select value={filters.role} onChange={(e) => setFilters({...filters, role: e.target.value})}>
+              <option value="all">All Roles</option>
+              <option value="volunteer">Volunteer</option>
+              <option value="staff">Staff</option>
+              <option value="admin">Admin</option>
+            </select>
+          </label>
+          
+          <label>
+            Min Hours:
+            <input
+              type="number"
+              min="0"
+              value={filters.minHours}
+              onChange={(e) => setFilters({...filters, minHours: Number(e.target.value)})}
+            />
+          </label>
+          
+          <label>
+            Max Hours:
+            <input
+              type="number"
+              min="0"
+              value={filters.maxHours}
+              onChange={(e) => setFilters({...filters, maxHours: Number(e.target.value)})}
+            />
+          </label>
         </div>
       </div>
-
+      
+      {/* User Table */}
       <div className="table-container">
-        <table className="users-table">
+        <table className="user-table">
           <thead>
             <tr>
               <th onClick={() => handleSort('id')} className="sortable">
@@ -197,7 +170,6 @@ const AdminDashboard = () => {
           <div className="no-results">No users found matching your criteria.</div>
         )}
       </div>
-
       <footer className="dashboard-footer">
         <p>Showing {sortedUsers.length} of {users.length} users</p>
       </footer>
@@ -215,7 +187,6 @@ export const AdminDashboardWithAuth = ({ isAdmin = true }) => {
       </div>
     );
   }
-
   return <AdminDashboard />;
 };
 
