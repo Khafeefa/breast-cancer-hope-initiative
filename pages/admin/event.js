@@ -32,7 +32,6 @@ export default function AdminEvent() {
         .from('events')
         .select('*')
         .order('start_time', { ascending: true });
-
       if (error) throw error;
       setEvents(data || []);
     } catch (error) {
@@ -44,7 +43,6 @@ export default function AdminEvent() {
     e.preventDefault();
     setLoading(true);
     setMessage('');
-
     try {
       const { data, error } = await supabase
         .from('events')
@@ -57,9 +55,7 @@ export default function AdminEvent() {
           },
         ])
         .select();
-
       if (error) throw error;
-
       setMessage('Event created successfully!');
       setTitle('');
       setLocation('');
@@ -73,23 +69,29 @@ export default function AdminEvent() {
     }
   };
 
+  const handleDelete = async (eventId) => {
+    if (!window.confirm('Are you sure you want to delete this event?')) return;
+    try {
+      const { error } = await supabase.from('events').delete().eq('id', eventId);
+      if (error) throw error;
+      setMessage('Event deleted successfully!');
+      fetchEvents();
+    } catch (error) {
+      setMessage(`Error deleting event: ${error.message}`);
+    }
+  };
+
   const generateQRCode = async () => {
     if (!selectedEvent) {
       setMessage('Please select an event to generate QR code');
       return;
     }
-
     setGeneratingQr(true);
     setMessage('');
-
     try {
       const event = events.find(e => e.id === parseInt(selectedEvent));
       if (!event) throw new Error('Event not found');
-
-      // Generate URL for the event (adjust this URL to match your app's structure)
       const eventUrl = `${window.location.origin}/event/${event.id}`;
-      
-      // Generate QR code
       const qrDataUrl = await QRCode.toDataURL(eventUrl, {
         width: 300,
         margin: 2,
@@ -98,7 +100,6 @@ export default function AdminEvent() {
           light: '#FFFFFF'
         }
       });
-
       setQrCodeUrl(qrDataUrl);
       setMessage('QR Code generated successfully!');
     } catch (error) {
@@ -110,7 +111,6 @@ export default function AdminEvent() {
 
   const downloadQRCode = () => {
     if (!qrCodeUrl) return;
-
     const event = events.find(e => e.id === parseInt(selectedEvent));
     const link = document.createElement('a');
     link.href = qrCodeUrl;
@@ -151,7 +151,7 @@ export default function AdminEvent() {
           Create New Event
         </h1>
         <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '20px' }}>
+          <div style={{ marginBottom: '24px' }}>
             <label
               htmlFor="title"
               style={{
@@ -168,7 +168,7 @@ export default function AdminEvent() {
               type="text"
               id="title"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={e => setTitle(e.target.value)}
               style={{
                 width: '100%',
                 padding: '12px',
@@ -180,7 +180,7 @@ export default function AdminEvent() {
               required
             />
           </div>
-          <div style={{ marginBottom: '20px' }}>
+          <div style={{ marginBottom: '24px' }}>
             <label
               htmlFor="location"
               style={{
@@ -197,7 +197,7 @@ export default function AdminEvent() {
               type="text"
               id="location"
               value={location}
-              onChange={(e) => setLocation(e.target.value)}
+              onChange={e => setLocation(e.target.value)}
               style={{
                 width: '100%',
                 padding: '12px',
@@ -209,7 +209,7 @@ export default function AdminEvent() {
               required
             />
           </div>
-          <div style={{ marginBottom: '20px' }}>
+          <div style={{ marginBottom: '24px' }}>
             <label
               htmlFor="startTime"
               style={{
@@ -226,7 +226,7 @@ export default function AdminEvent() {
               type="datetime-local"
               id="startTime"
               value={startTime}
-              onChange={(e) => setStartTime(e.target.value)}
+              onChange={e => setStartTime(e.target.value)}
               style={{
                 width: '100%',
                 padding: '12px',
@@ -238,7 +238,7 @@ export default function AdminEvent() {
               required
             />
           </div>
-          <div style={{ marginBottom: '20px' }}>
+          <div style={{ marginBottom: '24px' }}>
             <label
               htmlFor="endTime"
               style={{
@@ -255,7 +255,7 @@ export default function AdminEvent() {
               type="datetime-local"
               id="endTime"
               value={endTime}
-              onChange={(e) => setEndTime(e.target.value)}
+              onChange={e => setEndTime(e.target.value)}
               style={{
                 width: '100%',
                 padding: '12px',
@@ -288,8 +288,30 @@ export default function AdminEvent() {
           </button>
         </form>
 
+        {/* Event list with delete functionality */}
+        <div style={{margin: '40px 0'}}>
+          <h2 style={{ textAlign: 'center', color: '#FF1493', fontSize: '2rem', marginBottom: '16px' }}>
+            Existing Events
+          </h2>
+          <ul style={{ listStyle: 'none', padding: 0 }}>
+            {events.map(event => (
+              <li key={event.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, background: '#ffe4ed', borderRadius: 10, padding: 12 }}>
+                <span>
+                  <b>{event.title}</b> (<span>{new Date(event.start_time).toLocaleString()}</span>)
+                </span>
+                <button
+                  onClick={() => handleDelete(event.id)}
+                  style={{ background: 'linear-gradient(135deg, #ff1744, #ff99a1)', color: 'white', border: 'none', borderRadius: 12, padding: '6px 18px', boxShadow: '0 2px 8px rgba(255,0,0,.10)', fontWeight: 'bold', fontSize: '1rem', cursor: 'pointer' }}
+                >
+                  Delete
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
         {/* QR Code Generator Section */}
-        <div style={{ marginTop: '40px', paddingTop: '40px', borderTop: '2px solid #FFB6C1' }}>
+        <div style={{ borderTop: '2px solid #FFB6C1', marginTop: '40px', paddingTop: '32px' }}>
           <h2
             style={{
               textAlign: 'center',
@@ -300,7 +322,7 @@ export default function AdminEvent() {
           >
             Generate Event QR Code
           </h2>
-          <div style={{ marginBottom: '20px' }}>
+          <div style={{ marginBottom: '24px' }}>
             <label
               htmlFor="eventSelect"
               style={{
@@ -316,7 +338,7 @@ export default function AdminEvent() {
             <select
               id="eventSelect"
               value={selectedEvent}
-              onChange={(e) => setSelectedEvent(e.target.value)}
+              onChange={e => setSelectedEvent(e.target.value)}
               style={{
                 width: '100%',
                 padding: '12px',
@@ -328,7 +350,7 @@ export default function AdminEvent() {
               }}
             >
               <option value="">-- Select an event --</option>
-              {events.map((event) => (
+              {events.map(event => (
                 <option key={event.id} value={event.id}>
                   {event.title} - {new Date(event.start_time).toLocaleDateString()}
                 </option>
@@ -353,7 +375,6 @@ export default function AdminEvent() {
           >
             {generatingQr ? 'Generating...' : 'Generate QR Code'}
           </button>
-
           {qrCodeUrl && (
             <div style={{ marginTop: '30px', textAlign: 'center' }}>
               <img
@@ -387,17 +408,18 @@ export default function AdminEvent() {
             </div>
           )}
         </div>
-
         {message && (
-          <p style={{
-            marginTop: '20px',
-            padding: '15px',
-            backgroundColor: message.includes('Error') ? '#FFE6E6' : '#E6FFE6',
-            color: message.includes('Error') ? '#FF1493' : '#008000',
-            borderRadius: '10px',
-            fontWeight: 'bold',
-            textAlign: 'center'
-          }}>
+          <p
+            style={{
+              marginTop: '20px',
+              padding: '15px',
+              backgroundColor: message.includes('Error') ? '#FFE6E6' : '#E6FFE6',
+              color: message.includes('Error') ? '#FF1493' : '#008000',
+              borderRadius: '10px',
+              fontWeight: 'bold',
+              textAlign: 'center'
+            }}
+          >
             {message}
           </p>
         )}
