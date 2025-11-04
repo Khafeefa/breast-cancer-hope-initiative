@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { QrReader } from 'react-qr-reader';
+import { useState, useEffect, useRef } from 'react';
+import { Html5Qrcode } from 'html5-qrcode';
 import { useRouter } from 'next/router';
 
 export default function Scan() {
@@ -8,45 +8,89 @@ export default function Scan() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const router = useRouter();
+  const scannerRef = useRef(null);
+  const html5QrcodeRef = useRef(null);
 
-  const handleScan = async (result) => {
-    if (result) {
-      setData(result?.text);
-      setScanning(false);
-      
-      try {
-        // Send attendance data to API
-        const response = await fetch('/api/attendance', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            qrData: result?.text,
-            timestamp: new Date().toISOString(),
-          }),
-        });
-
-        const data = await response.json();
-        
-        if (response.ok) {
-          setSuccess('Attendance recorded successfully!');
-          setTimeout(() => {
-            setSuccess('');
-            setScanning(true);
-          }, 2000);
-        } else {
-          setError(data.message || 'Failed to record attendance');
-        }
-      } catch (err) {
-        setError('Error recording attendance: ' + err.message);
+  useEffect(() => {
+    return () => {
+      // Cleanup scanner on unmount
+      if (html5QrcodeRef.current?.isScanning) {
+        html5QrcodeRef.current.stop().catch(console.error);
       }
+    };
+  }, []);
+
+  const handleScan = async (decodedText) => {
+    setData(decodedText);
+    setScanning(false);
+    
+    // Stop scanner after successful scan
+    if (html5QrcodeRef.current?.isScanning) {
+      await html5QrcodeRef.current.stop();
+    }
+    
+    try {
+      // Send attendance data to API
+      const response = await fetch('/api/attendance', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          qrData: decodedText,
+          timestamp: new Date().toISOString(),
+        }),
+      });
+      const data = await response.json();
+      
+      if (response.ok) {
+        setSuccess('Attendance recorded successfully!');
+        setTimeout(() => {
+          setSuccess('');
+        }, 2000);
+      } else {
+        setError(data.message || 'Failed to record attendance');
+      }
+    } catch (err) {
+      setError('Error recording attendance: ' + err.message);
     }
   };
 
-  const handleError = (err) => {
-    console.error(err);
-    setError('Camera access denied or error occurred');
+  const startScanner = async () => {
+    setError('');
+    setScanning(true);
+    
+    try {
+      const html5Qrcode = new Html5Qrcode('qr-reader');
+      html5QrcodeRef.current = html5Qrcode;
+      
+      await html5Qrcode.start(
+        { facingMode: 'environment' },
+        {
+          fps: 10,
+          qrbox: { width: 250, height: 250 }
+        },
+        handleScan,
+        (errorMessage) => {
+          // Ignore continuous scanning errors
+        }
+      );
+    } catch (err) {
+      console.error(err);
+      setError('Camera access denied or error occurred');
+      setScanning(false);
+    }
+  };
+
+  const stopScanner = async () => {
+    if (html5QrcodeRef.current?.isScanning) {
+      try {
+        await html5QrcodeRef.current.stop();
+        setScanning(false);
+      } catch (err) {
+        console.error('Error stopping scanner:', err);
+      }
+    }
   };
 
   return (
@@ -80,18 +124,21 @@ export default function Scan() {
 
           <div className="mb-6">
             {scanning ? (
-              <div className="border-4 border-pink-500 rounded-lg overflow-hidden">
-                <QrReader
-                  onResult={handleScan}
-                  onError={handleError}
-                  constraints={{ facingMode: 'environment' }}
-                  className="w-full"
-                />
+              <div>
+                <div id="qr-reader" ref={scannerRef} className="border-4 border-pink-500 rounded-lg overflow-hidden"></div>
+                <div className="text-center mt-4">
+                  <button
+                    onClick={stopScanner}
+                    className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300"
+                  >
+                    Stop Scanner
+                  </button>
+                </div>
               </div>
             ) : (
               <div className="text-center">
                 <button
-                  onClick={() => setScanning(true)}
+                  onClick={startScanner}
                   className="bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300"
                 >
                   Start Scanner
