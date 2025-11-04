@@ -1,7 +1,6 @@
 // Admin Dashboard Component with User Management
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
-import './dashboard.css';
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([
@@ -54,7 +53,7 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="admin-dashboard">
+    <div className="admin-dashboard" style={{ padding: '2rem', minHeight: '100vh', backgroundColor: '#fff' }}>
       {/* Home Button */}
       <div style={{ position: 'fixed', top: '20px', right: '20px', zIndex: 1000 }}>
         <Link href="/">
@@ -74,27 +73,34 @@ const AdminDashboard = () => {
         </Link>
       </div>
 
-      <header className="dashboard-header">
-        <h1>Admin Dashboard</h1>
-        <p>Manage volunteer information and track participation</p>
+      <header style={{ marginBottom: '2rem', textAlign: 'center' }}>
+        <h1 style={{ color: '#c71585', fontSize: '2.5rem', marginBottom: '0.5rem' }}>Admin Dashboard</h1>
+        <p style={{ color: '#666', fontSize: '1.2rem' }}>Manage volunteer information and track participation</p>
       </header>
       
-      <div className="controls-section">
+      <div style={{ marginBottom: '2rem' }}>
         {/* Search Bar */}
-        <div className="search-bar">
+        <div style={{ marginBottom: '1rem' }}>
           <input
             type="text"
             placeholder="Search by name or email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            style={{
+              width: '100%',
+              padding: '0.75rem',
+              border: '2px solid #ffc0cb',
+              borderRadius: '8px',
+              fontSize: '1rem'
+            }}
           />
         </div>
         
         {/* Filter Controls */}
-        <div className="filters">
-          <label>
-            Role:
-            <select value={filters.role} onChange={(e) => setFilters({...filters, role: e.target.value})}>
+        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <span style={{ fontWeight: 'bold', color: '#c71585' }}>Role:</span>
+            <select value={filters.role} onChange={(e) => setFilters({...filters, role: e.target.value})} style={{ padding: '0.5rem', border: '2px solid #ffc0cb', borderRadius: '8px' }}>
               <option value="all">All Roles</option>
               <option value="volunteer">Volunteer</option>
               <option value="staff">Staff</option>
@@ -102,75 +108,77 @@ const AdminDashboard = () => {
             </select>
           </label>
           
-          <label>
-            Min Hours:
+          <label style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <span style={{ fontWeight: 'bold', color: '#c71585' }}>Min Hours:</span>
             <input
               type="number"
               min="0"
               value={filters.minHours}
               onChange={(e) => setFilters({...filters, minHours: Number(e.target.value)})}
+              style={{ padding: '0.5rem', border: '2px solid #ffc0cb', borderRadius: '8px' }}
             />
           </label>
           
-          <label>
-            Max Hours:
+          <label style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <span style={{ fontWeight: 'bold', color: '#c71585' }}>Max Hours:</span>
             <input
               type="number"
               min="0"
               value={filters.maxHours}
               onChange={(e) => setFilters({...filters, maxHours: Number(e.target.value)})}
+              style={{ padding: '0.5rem', border: '2px solid #ffc0cb', borderRadius: '8px' }}
             />
           </label>
         </div>
       </div>
       
       {/* User Table */}
-      <div className="table-container">
-        <table className="user-table">
+      <div style={{ overflowX: 'auto' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', borderRadius: '8px', overflow: 'hidden' }}>
           <thead>
-            <tr>
-              <th onClick={() => handleSort('id')} className="sortable">
+            <tr style={{ backgroundColor: '#ffc0cb' }}>
+              <th onClick={() => handleSort('id')} style={{ padding: '1rem', textAlign: 'left', cursor: 'pointer', color: '#c71585', fontWeight: 'bold', borderBottom: '2px solid #c71585' }}>
                 ID {sortConfig.key === 'id' && (sortConfig.direction === 'asc' ? '▲' : '▼')}
               </th>
-              <th onClick={() => handleSort('name')} className="sortable">
+              <th onClick={() => handleSort('name')} style={{ padding: '1rem', textAlign: 'left', cursor: 'pointer', color: '#c71585', fontWeight: 'bold', borderBottom: '2px solid #c71585' }}>
                 Name {sortConfig.key === 'name' && (sortConfig.direction === 'asc' ? '▲' : '▼')}
               </th>
-              <th onClick={() => handleSort('email')} className="sortable">
+              <th onClick={() => handleSort('email')} style={{ padding: '1rem', textAlign: 'left', cursor: 'pointer', color: '#c71585', fontWeight: 'bold', borderBottom: '2px solid #c71585' }}>
                 Email {sortConfig.key === 'email' && (sortConfig.direction === 'asc' ? '▲' : '▼')}
               </th>
-              <th onClick={() => handleSort('attendance')} className="sortable">
+              <th onClick={() => handleSort('attendance')} style={{ padding: '1rem', textAlign: 'left', cursor: 'pointer', color: '#c71585', fontWeight: 'bold', borderBottom: '2px solid #c71585' }}>
                 Attendance {sortConfig.key === 'attendance' && (sortConfig.direction === 'asc' ? '▲' : '▼')}
               </th>
-              <th onClick={() => handleSort('hours')} className="sortable">
+              <th onClick={() => handleSort('hours')} style={{ padding: '1rem', textAlign: 'left', cursor: 'pointer', color: '#c71585', fontWeight: 'bold', borderBottom: '2px solid #c71585' }}>
                 Hours {sortConfig.key === 'hours' && (sortConfig.direction === 'asc' ? '▲' : '▼')}
               </th>
-              <th onClick={() => handleSort('role')} className="sortable">
+              <th onClick={() => handleSort('role')} style={{ padding: '1rem', textAlign: 'left', cursor: 'pointer', color: '#c71585', fontWeight: 'bold', borderBottom: '2px solid #c71585' }}>
                 Role {sortConfig.key === 'role' && (sortConfig.direction === 'asc' ? '▲' : '▼')}
               </th>
-              <th onClick={() => handleSort('joinDate')} className="sortable">
+              <th onClick={() => handleSort('joinDate')} style={{ padding: '1rem', textAlign: 'left', cursor: 'pointer', color: '#c71585', fontWeight: 'bold', borderBottom: '2px solid #c71585' }}>
                 Join Date {sortConfig.key === 'joinDate' && (sortConfig.direction === 'asc' ? '▲' : '▼')}
               </th>
             </tr>
           </thead>
           <tbody>
             {sortedUsers.map(user => (
-              <tr key={user.id}>
-                <td>{user.id}</td>
-                <td className="user-name">{user.name}</td>
-                <td className="user-email">{user.email}</td>
-                <td className="attendance-cell">{user.attendance}</td>
-                <td className="hours-cell">{user.hours.toFixed(1)} hrs</td>
-                <td><span className={`role-badge role-${user.role}`}>{user.role}</span></td>
-                <td>{user.joinDate}</td>
+              <tr key={user.id} style={{ borderBottom: '1px solid #ffc0cb' }}>
+                <td style={{ padding: '1rem', color: '#333' }}>{user.id}</td>
+                <td style={{ padding: '1rem', color: '#333' }}>{user.name}</td>
+                <td style={{ padding: '1rem', color: '#333' }}>{user.email}</td>
+                <td style={{ padding: '1rem', color: '#333' }}>{user.attendance}</td>
+                <td style={{ padding: '1rem', color: '#333' }}>{user.hours.toFixed(1)} hrs</td>
+                <td style={{ padding: '1rem' }}><span style={{ backgroundColor: '#ffc0cb', color: '#c71585', padding: '0.25rem 0.75rem', borderRadius: '15px', fontSize: '0.875rem', fontWeight: 'bold' }}>{user.role}</span></td>
+                <td style={{ padding: '1rem', color: '#333' }}>{user.joinDate}</td>
               </tr>
             ))}
           </tbody>
         </table>
         {sortedUsers.length === 0 && (
-          <div className="no-results">No users found matching your criteria.</div>
+          <div style={{ textAlign: 'center', padding: '2rem', color: '#c71585', fontSize: '1.2rem' }}>No users found matching your criteria.</div>
         )}
       </div>
-      <footer className="dashboard-footer">
+      <footer style={{ marginTop: '2rem', textAlign: 'center', color: '#666', padding: '1rem', borderTop: '2px solid #ffc0cb' }}>
         <p>Showing {sortedUsers.length} of {users.length} users</p>
       </footer>
     </div>
@@ -181,9 +189,9 @@ const AdminDashboard = () => {
 export const AdminDashboardWithAuth = ({ isAdmin = true }) => {
   if (!isAdmin) {
     return (
-      <div className="access-denied">
-        <h2>Access Denied</h2>
-        <p>You do not have permission to access the admin dashboard. Admin-only access required.</p>
+      <div style={{ textAlign: 'center', padding: '3rem' }}>
+        <h2 style={{ color: '#c71585' }}>Access Denied</h2>
+        <p style={{ color: '#666' }}>You do not have permission to access the admin dashboard. Admin-only access required.</p>
       </div>
     );
   }
