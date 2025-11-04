@@ -34,48 +34,43 @@ export default function Home() {
           lineHeight: '1.8',
           marginBottom: '30px'
         }}>
-          Together we bring hope, support, and awareness to the fight against breast cancer.
+          Supporting Hope, Spreading Awareness, and Empowering Communities
         </p>
-        <div style={{
-          display: 'flex',
-          gap: '20px',
-          justifyContent: 'center',
-          marginTop: '40px'
-        }}>
-          <Link href="/admin/login">
-            <button style={{
-              backgroundColor: '#FF69B4',
-              color: 'white',
-              fontSize: '1.2rem',
-              padding: '15px 30px',
-              border: 'none',
-              borderRadius: '10px',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-              boxShadow: '0 4px 10px rgba(255, 105, 180, 0.3)',
-              transition: 'transform 0.2s'
-            }}
-            onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
-            onMouseOut={(e) => e.target.style.transform = 'scale(1)'}>
-              Admin Login
-            </button>
-          </Link>
+        
+        <div style={{ marginTop: '40px' }}>
           <Link href="/scan">
             <button style={{
-              backgroundColor: '#4169E1',
+              background: 'linear-gradient(135deg, #FF69B4, #FFB6C1)',
+              color: 'white',
+              fontSize: '1.5rem',
+              padding: '15px 40px',
+              border: 'none',
+              borderRadius: '50px',
+              cursor: 'pointer',
+              boxShadow: '0 4px 15px rgba(255, 105, 180, 0.4)',
+              transition: 'transform 0.2s',
+              fontWeight: 'bold'
+            }}>
+              Member Scan
+            </button>
+          </Link>
+        </div>
+
+        <div style={{ marginTop: '30px' }}>
+          <Link href="/admin/login">
+            <button style={{
+              background: 'linear-gradient(135deg, #FFB6C1, #FF69B4)',
               color: 'white',
               fontSize: '1.2rem',
-              padding: '15px 30px',
+              padding: '12px 30px',
               border: 'none',
-              borderRadius: '10px',
+              borderRadius: '50px',
               cursor: 'pointer',
-              fontWeight: 'bold',
-              boxShadow: '0 4px 10px rgba(65, 105, 225, 0.3)',
-              transition: 'transform 0.2s'
-            }}
-            onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
-            onMouseOut={(e) => e.target.style.transform = 'scale(1)'}>
-              Member Scan
+              boxShadow: '0 4px 15px rgba(255, 182, 193, 0.4)',
+              transition: 'transform 0.2s',
+              fontWeight: 'bold'
+            }}>
+              Admin Login
             </button>
           </Link>
         </div>
