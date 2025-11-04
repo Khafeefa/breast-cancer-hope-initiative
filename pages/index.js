@@ -13,6 +13,7 @@ export default function Home() {
       const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
     };
+
     getUser();
 
     // Listen for auth changes
@@ -52,19 +53,40 @@ export default function Home() {
       }}>
         {user ? (
           <>
-            <span style={{ color: '#c71585', fontWeight: 'bold' }}>
+            <Link href="/events">
+              <button style={{
+                background: 'linear-gradient(135deg, #c71585, #ffc0cb)',
+                color: 'white',
+                fontSize: '1rem',
+                padding: '10px 20px',
+                border: 'none',
+                borderRadius: '25px',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                boxShadow: '0 2px 10px rgba(199, 21, 133, 0.3)'
+              }}>
+                View Events
+              </button>
+            </Link>
+            <span style={{
+              color: '#c71585',
+              fontWeight: 'bold',
+              fontSize: '1rem'
+            }}>
               {user.email}
             </span>
             <button
               onClick={handleLogout}
               style={{
-                background: '#c71585',
+                background: 'linear-gradient(135deg, #ffc0cb, #c71585)',
                 color: 'white',
+                fontSize: '1rem',
                 padding: '10px 20px',
                 border: 'none',
-                borderRadius: '20px',
+                borderRadius: '25px',
                 cursor: 'pointer',
-                fontWeight: 'bold'
+                fontWeight: 'bold',
+                boxShadow: '0 2px 10px rgba(255, 192, 203, 0.3)'
               }}
             >
               Logout
@@ -74,26 +96,30 @@ export default function Home() {
           <>
             <Link href="/login">
               <button style={{
-                background: 'white',
-                color: '#c71585',
+                background: 'linear-gradient(135deg, #c71585, #ffc0cb)',
+                color: 'white',
+                fontSize: '1rem',
                 padding: '10px 20px',
-                border: '2px solid #c71585',
-                borderRadius: '20px',
+                border: 'none',
+                borderRadius: '25px',
                 cursor: 'pointer',
-                fontWeight: 'bold'
+                fontWeight: 'bold',
+                boxShadow: '0 2px 10px rgba(199, 21, 133, 0.3)'
               }}>
                 Login
               </button>
             </Link>
             <Link href="/signup">
               <button style={{
-                background: '#c71585',
+                background: 'linear-gradient(135deg, #ffc0cb, #c71585)',
                 color: 'white',
+                fontSize: '1rem',
                 padding: '10px 20px',
                 border: 'none',
-                borderRadius: '20px',
+                borderRadius: '25px',
                 cursor: 'pointer',
-                fontWeight: 'bold'
+                fontWeight: 'bold',
+                boxShadow: '0 2px 10px rgba(255, 192, 203, 0.3)'
               }}>
                 Sign Up
               </button>
@@ -104,16 +130,14 @@ export default function Home() {
 
       <main style={{
         textAlign: 'center',
-        backgroundColor: 'white',
-        padding: '50px',
-        borderRadius: '20px',
-        boxShadow: '0 4px 20px rgba(199, 21, 133, 0.3)',
-        maxWidth: '800px'
+        maxWidth: '800px',
+        padding: '40px'
       }}>
         <h1 style={{
+          fontSize: '4rem',
           color: '#c71585',
-          fontSize: '3.5rem',
           marginBottom: '20px',
+          fontWeight: 'bold',
           textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
         }}>
           Breast Cancer Hope Initiative
