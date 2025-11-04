@@ -35,88 +35,219 @@ export default function AdminEvent() {
             start_time: startTime,
             end_time: endTime,
           },
-        ]);
+        ])
+        .select();
 
       if (error) throw error;
 
       setMessage('Event created successfully!');
+      // Reset form
       setTitle('');
       setLocation('');
       setStartTime('');
       setEndTime('');
     } catch (error) {
-      setMessage('Error creating event: ' + error.message);
+      setMessage('Error: ' + error.message);
     } finally {
       setLoading(false);
     }
   };
 
+  const handleLogout = () => {
+    sessionStorage.removeItem('isAdmin');
+    router.push('/admin/login');
+  };
+
   return (
-    <div style={{ minHeight: '100vh', padding: '2rem', backgroundColor: '#f5f5f5' }}>
-      <h1 style={{ textAlign: 'center', marginBottom: '2rem', color: '#333' }}>Create New Event</h1>
-      <form onSubmit={handleSubmit} style={{ maxWidth: '600px', margin: '0 auto', backgroundColor: 'white', padding: '2rem', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-        <div style={{ marginBottom: '1.5rem' }}>
-          <label htmlFor="title" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#333' }}>Event Title</label>
-          <input
-            type="text"
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-            style={{ width: '100%', padding: '0.75rem', fontSize: '1rem', border: '1px solid #ddd', borderRadius: '4px', boxSizing: 'border-box' }}
-          />
-        </div>
-
-        <div style={{ marginBottom: '1.5rem' }}>
-          <label htmlFor="location" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#333' }}>Location</label>
-          <input
-            type="text"
-            id="location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            required
-            style={{ width: '100%', padding: '0.75rem', fontSize: '1rem', border: '1px solid #ddd', borderRadius: '4px', boxSizing: 'border-box' }}
-          />
-        </div>
-
-        <div style={{ marginBottom: '1.5rem' }}>
-          <label htmlFor="startTime" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#333' }}>Start Time</label>
-          <input
-            type="datetime-local"
-            id="startTime"
-            value={startTime}
-            onChange={(e) => setStartTime(e.target.value)}
-            required
-            style={{ width: '100%', padding: '0.75rem', fontSize: '1rem', border: '1px solid #ddd', borderRadius: '4px', boxSizing: 'border-box' }}
-          />
-        </div>
-
-        <div style={{ marginBottom: '1.5rem' }}>
-          <label htmlFor="endTime" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#333' }}>End Time</label>
-          <input
-            type="datetime-local"
-            id="endTime"
-            value={endTime}
-            onChange={(e) => setEndTime(e.target.value)}
-            required
-            style={{ width: '100%', padding: '0.75rem', fontSize: '1rem', border: '1px solid #ddd', borderRadius: '4px', boxSizing: 'border-box' }}
-          />
-        </div>
-
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #FFB6C1 0%, #FFF 50%, #FFB6C1 100%)',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      fontFamily: 'Arial, sans-serif',
+      padding: '20px'
+    }}>
+      <header style={{
+        width: '100%',
+        maxWidth: '800px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '30px'
+      }}>
+        <h1 style={{
+          color: '#FF69B4',
+          fontSize: '2.5rem',
+          textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
+        }}>
+          Create Event
+        </h1>
         <button
-          type="submit"
-          disabled={loading}
-          style={{ width: '100%', padding: '1rem', fontSize: '1rem', backgroundColor: loading ? '#ccc' : '#0070f3', color: 'white', border: 'none', borderRadius: '4px', cursor: loading ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}
+          onClick={handleLogout}
+          style={{
+            background: 'linear-gradient(135deg, #FF69B4, #FFB6C1)',
+            color: 'white',
+            fontSize: '1rem',
+            padding: '10px 20px',
+            border: 'none',
+            borderRadius: '50px',
+            cursor: 'pointer',
+            boxShadow: '0 4px 15px rgba(255, 105, 180, 0.4)',
+            fontWeight: 'bold'
+          }}
         >
-          {loading ? 'Creating...' : 'Create Event'}
+          Logout
         </button>
+      </header>
+
+      <main style={{
+        backgroundColor: 'white',
+        padding: '40px',
+        borderRadius: '20px',
+        boxShadow: '0 4px 20px rgba(255, 105, 180, 0.3)',
+        maxWidth: '800px',
+        width: '100%'
+      }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <div>
+            <label htmlFor="title" style={{
+              display: 'block',
+              marginBottom: '8px',
+              color: '#333',
+              fontWeight: 'bold'
+            }}>
+              Event Title:
+            </label>
+            <input
+              type="text"
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '12px',
+                fontSize: '1rem',
+                border: '2px solid #FFB6C1',
+                borderRadius: '10px',
+                outline: 'none'
+              }}
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="location" style={{
+              display: 'block',
+              marginBottom: '8px',
+              color: '#333',
+              fontWeight: 'bold'
+            }}>
+              Location:
+            </label>
+            <input
+              type="text"
+              id="location"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '12px',
+                fontSize: '1rem',
+                border: '2px solid #FFB6C1',
+                borderRadius: '10px',
+                outline: 'none'
+              }}
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="startTime" style={{
+              display: 'block',
+              marginBottom: '8px',
+              color: '#333',
+              fontWeight: 'bold'
+            }}>
+              Start Time:
+            </label>
+            <input
+              type="datetime-local"
+              id="startTime"
+              value={startTime}
+              onChange={(e) => setStartTime(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '12px',
+                fontSize: '1rem',
+                border: '2px solid #FFB6C1',
+                borderRadius: '10px',
+                outline: 'none'
+              }}
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="endTime" style={{
+              display: 'block',
+              marginBottom: '8px',
+              color: '#333',
+              fontWeight: 'bold'
+            }}>
+              End Time:
+            </label>
+            <input
+              type="datetime-local"
+              id="endTime"
+              value={endTime}
+              onChange={(e) => setEndTime(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '12px',
+                fontSize: '1rem',
+                border: '2px solid #FFB6C1',
+                borderRadius: '10px',
+                outline: 'none'
+              }}
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              background: loading ? '#ccc' : 'linear-gradient(135deg, #FF69B4, #FFB6C1)',
+              color: 'white',
+              fontSize: '1.2rem',
+              padding: '15px',
+              border: 'none',
+              borderRadius: '50px',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              marginTop: '10px',
+              boxShadow: '0 4px 15px rgba(255, 105, 180, 0.4)',
+              fontWeight: 'bold'
+            }}
+          >
+            {loading ? 'Creating...' : 'Create Event'}
+          </button>
+        </form>
 
         {message && (
-          <div style={{ marginTop: '1rem', padding: '1rem', borderRadius: '4px', backgroundColor: message.includes('Error') ? '#fee' : '#efe', color: message.includes('Error') ? '#c33' : '#3c3', fontWeight: 'bold', textAlign: 'center' }}>
+          <p style={{
+            marginTop: '20px',
+            padding: '15px',
+            backgroundColor: message.includes('Error') ? '#FFE6E6' : '#E6FFE6',
+            color: message.includes('Error') ? '#FF1493' : '#008000',
+            borderRadius: '10px',
+            fontWeight: 'bold',
+            textAlign: 'center'
+          }}>
             {message}
-          </div>
+          </p>
         )}
-      </form>
+      </main>
     </div>
   );
 }
