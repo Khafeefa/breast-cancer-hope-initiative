@@ -14,17 +14,15 @@ export default function Signup() {
     e.preventDefault();
     setLoading(true);
     setMessage('');
-
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
     });
-
     if (error) {
       setMessage(error.message);
     } else {
-      setMessage('Success! Please check your email to confirm your account.');
-      setTimeout(() => router.push('/login'), 3000);
+      setMessage('Account created successfully! Redirecting...');
+      setTimeout(() => router.push('/'), 2000);
     }
     setLoading(false);
   };
@@ -38,7 +36,7 @@ export default function Signup() {
         <div style={styles.card}>
           <h1 style={styles.title}>Create Account</h1>
           <p style={styles.subtitle}>Join Breast Cancer Hope Initiative</p>
-          
+
           <form onSubmit={handleSignup} style={styles.form}>
             <div style={styles.inputGroup}>
               <label style={styles.label}>Email</label>
@@ -51,7 +49,6 @@ export default function Signup() {
                 placeholder="Enter your email"
               />
             </div>
-            
             <div style={styles.inputGroup}>
               <label style={styles.label}>Password</label>
               <input
@@ -59,39 +56,39 @@ export default function Signup() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                minLength={6}
                 style={styles.input}
-                placeholder="Enter your password (min 6 characters)"
+                placeholder="Enter your password"
               />
             </div>
-
-            {message && (
-              <div style={{
-                ...styles.message,
-                backgroundColor: message.includes('Success') ? '#ffc0cb' : '#ffe0e0',
-                color: message.includes('Success') ? '#c71585' : '#d32f2f'
-              }}>
-                {message}
-              </div>
-            )}
-
             <button
               type="submit"
               disabled={loading}
-              style={{
-                ...styles.button,
-                opacity: loading ? 0.7 : 1,
-                cursor: loading ? 'not-allowed' : 'pointer'
-              }}
+              style={styles.button}
             >
               {loading ? 'Creating Account...' : 'Sign Up'}
             </button>
           </form>
 
-          <p style={styles.footer}>
+          {message && (
+            <p
+              style={{
+                ...styles.message,
+                backgroundColor: message.includes('error')
+                  ? '#ffdddd'
+                  : '#ddffdd',
+                color: message.includes('error') ? '#cc0000' : '#00aa00',
+              }}
+            >
+              {message}
+            </p>
+          )}
+
+          <div style={styles.footer}>
             Already have an account?{' '}
-            <a href="/login" style={styles.link}>Log In</a>
-          </p>
+            <a href="/login" style={styles.link}>
+              Log In
+            </a>
+          </div>
         </div>
       </div>
     </>
@@ -100,27 +97,25 @@ export default function Signup() {
 
 const styles = {
   container: {
-    minHeight: '100vh',
     display: 'flex',
-    alignItems: 'center',
     justifyContent: 'center',
-    background: 'linear-gradient(135deg, #ffc0cb 0%, #ffffff 50%, #ffc0cb 100%)',
-    padding: '20px',
+    alignItems: 'center',
+    minHeight: '100vh',
+    backgroundColor: '#fff5f7',
   },
   card: {
     backgroundColor: '#ffffff',
     borderRadius: '12px',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
     padding: '40px',
-    boxShadow: '0 8px 24px rgba(199, 21, 133, 0.15)',
-    maxWidth: '450px',
     width: '100%',
+    maxWidth: '400px',
   },
   title: {
     fontSize: '28px',
     fontWeight: 'bold',
-    color: '#c71585',
+    color: '#333',
     marginBottom: '10px',
-    textAlign: 'center',
   },
   subtitle: {
     fontSize: '16px',
