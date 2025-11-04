@@ -28,7 +28,7 @@ export default function Scan() {
     if (html5QrcodeRef.current?.isScanning) {
       await html5QrcodeRef.current.stop();
     }
-    
+
     try {
       // Send attendance data to API
       const response = await fetch('/api/attendance', {
@@ -36,144 +36,185 @@ export default function Scan() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          qrData: decodedText,
-          timestamp: new Date().toISOString(),
-        }),
+        body: JSON.stringify({ memberId: decodedText }),
       });
-      const data = await response.json();
-      
+
       if (response.ok) {
         setSuccess('Attendance recorded successfully!');
-        setTimeout(() => {
-          setSuccess('');
-        }, 2000);
+        setError('');
       } else {
-        setError(data.message || 'Failed to record attendance');
+        const errorData = await response.json();
+        setError(errorData.error || 'Failed to record attendance');
+        setSuccess('');
       }
     } catch (err) {
-      setError('Error recording attendance: ' + err.message);
+      setError('Error: ' + err.message);
+      setSuccess('');
     }
   };
 
   const startScanner = async () => {
-    setError('');
-    setScanning(true);
-    
     try {
-      const html5Qrcode = new Html5Qrcode('qr-reader');
-      html5QrcodeRef.current = html5Qrcode;
-      
-      await html5Qrcode.start(
+      setScanning(true);
+      setError('');
+      setSuccess('');
+
+      if (!html5QrcodeRef.current) {
+        html5QrcodeRef.current = new Html5Qrcode('reader');
+      }
+
+      const qrCodeSuccessCallback = (decodedText) => {
+        handleScan(decodedText);
+      };
+
+      const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+      await html5QrcodeRef.current.start(
         { facingMode: 'environment' },
-        {
-          fps: 10,
-          qrbox: { width: 250, height: 250 }
-        },
-        handleScan,
-        (errorMessage) => {
-          // Ignore continuous scanning errors
-        }
+        config,
+        qrCodeSuccessCallback
       );
     } catch (err) {
-      console.error(err);
-      setError('Camera access denied or error occurred');
+      setError('Error starting scanner: ' + err.message);
       setScanning(false);
     }
   };
 
   const stopScanner = async () => {
-    if (html5QrcodeRef.current?.isScanning) {
-      try {
+    try {
+      if (html5QrcodeRef.current?.isScanning) {
         await html5QrcodeRef.current.stop();
         setScanning(false);
-      } catch (err) {
-        console.error('Error stopping scanner:', err);
       }
+    } catch (err) {
+      setError('Error stopping scanner: ' + err.message);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 py-12 px-4">
-      <div className="max-w-2xl mx-auto">
-        <div className="bg-white rounded-lg shadow-xl p-8">
-          <h1 className="text-3xl font-bold text-pink-600 mb-2 text-center">
-            QR Attendance Check-In
-          </h1>
-          <p className="text-gray-600 text-center mb-8">
-            Scan your QR code to record your attendance
-          </p>
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #FFB6C1 0%, #FFF 50%, #FFB6C1 100%)',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontFamily: 'Arial, sans-serif',
+      padding: '20px'
+    }}>
+      <main style={{
+        textAlign: 'center',
+        backgroundColor: 'white',
+        padding: '40px',
+        borderRadius: '20px',
+        boxShadow: '0 4px 20px rgba(255, 105, 180, 0.3)',
+        maxWidth: '600px',
+        width: '100%'
+      }}>
+        <h1 style={{
+          color: '#FF69B4',
+          fontSize: '2.5rem',
+          marginBottom: '20px',
+          textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
+        }}>
+          Member QR Code Scanner
+        </h1>
 
-          {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-              {error}
-              <button 
-                onClick={() => setError('')} 
-                className="float-right font-bold"
-              >
-                ×
-              </button>
-            </div>
-          )}
-
-          {success && (
-            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-              {success}
-            </div>
-          )}
-
-          <div className="mb-6">
-            {scanning ? (
-              <div>
-                <div id="qr-reader" ref={scannerRef} className="border-4 border-pink-500 rounded-lg overflow-hidden"></div>
-                <div className="text-center mt-4">
-                  <button
-                    onClick={stopScanner}
-                    className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300"
-                  >
-                    Stop Scanner
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="text-center">
-                <button
-                  onClick={startScanner}
-                  className="bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300"
-                >
-                  Start Scanner
-                </button>
-              </div>
-            )}
-          </div>
-
-          {data && (
-            <div className="bg-gray-100 p-4 rounded-lg">
-              <h3 className="font-semibold text-gray-700 mb-2">Scanned Data:</h3>
-              <p className="text-sm text-gray-600 break-all">{data}</p>
-            </div>
-          )}
-
-          <div className="mt-8 text-center">
+        <div style={{ marginBottom: '20px' }}>
+          {!scanning ? (
             <button
-              onClick={() => router.push('/')}
-              className="text-pink-600 hover:text-pink-800 font-semibold"
+              onClick={startScanner}
+              style={{
+                background: 'linear-gradient(135deg, #FF69B4, #FFB6C1)',
+                color: 'white',
+                fontSize: '1.2rem',
+                padding: '12px 30px',
+                border: 'none',
+                borderRadius: '50px',
+                cursor: 'pointer',
+                boxShadow: '0 4px 15px rgba(255, 105, 180, 0.4)',
+                fontWeight: 'bold'
+              }}
             >
-              ← Back to Home
+              Start Scanning
             </button>
-          </div>
+          ) : (
+            <button
+              onClick={stopScanner}
+              style={{
+                background: 'linear-gradient(135deg, #FFB6C1, #FF69B4)',
+                color: 'white',
+                fontSize: '1.2rem',
+                padding: '12px 30px',
+                border: 'none',
+                borderRadius: '50px',
+                cursor: 'pointer',
+                boxShadow: '0 4px 15px rgba(255, 182, 193, 0.4)',
+                fontWeight: 'bold'
+              }}
+            >
+              Stop Scanning
+            </button>
+          )}
         </div>
 
-        <div className="mt-6 bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">Instructions:</h2>
-          <ol className="list-decimal list-inside space-y-2 text-gray-600">
-            <li>Click "Start Scanner" to activate the camera</li>
-            <li>Position the QR code within the scanner frame</li>
-            <li>Wait for the automatic scan and confirmation</li>
-            <li>Your attendance will be recorded instantly</li>
-          </ol>
+        <div
+          id="reader"
+          style={{
+            width: '100%',
+            maxWidth: '500px',
+            margin: '20px auto',
+            border: '3px solid #FFB6C1',
+            borderRadius: '15px',
+            overflow: 'hidden'
+          }}
+        ></div>
+
+        {success && (
+          <div style={{
+            marginTop: '20px',
+            padding: '15px',
+            backgroundColor: '#E6FFE6',
+            color: '#008000',
+            borderRadius: '10px',
+            fontWeight: 'bold'
+          }}>
+            {success}
+          </div>
+        )}
+
+        {error && (
+          <div style={{
+            marginTop: '20px',
+            padding: '15px',
+            backgroundColor: '#FFE6E6',
+            color: '#FF1493',
+            borderRadius: '10px',
+            fontWeight: 'bold'
+          }}>
+            {error}
+          </div>
+        )}
+
+        <div style={{ marginTop: '30px' }}>
+          <button
+            onClick={() => router.push('/')}
+            style={{
+              background: 'linear-gradient(135deg, #FFB6C1, #FF69B4)',
+              color: 'white',
+              fontSize: '1rem',
+              padding: '10px 25px',
+              border: 'none',
+              borderRadius: '50px',
+              cursor: 'pointer',
+              boxShadow: '0 4px 15px rgba(255, 182, 193, 0.4)',
+              fontWeight: 'bold'
+            }}
+          >
+            Back to Home
+          </button>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
