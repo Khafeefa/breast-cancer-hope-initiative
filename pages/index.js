@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 export default function Home() {
   return (
     <div style={{
@@ -38,42 +40,46 @@ export default function Home() {
           display: 'flex',
           gap: '20px',
           justifyContent: 'center',
-          flexWrap: 'wrap'
+          marginTop: '40px'
         }}>
-          <button style={{
-            backgroundColor: '#FF69B4',
-            color: 'white',
-            border: 'none',
-            padding: '15px 30px',
-            fontSize: '1.2rem',
-            borderRadius: '10px',
-            cursor: 'pointer',
-            boxShadow: '0 2px 10px rgba(255, 105, 180, 0.4)',
-            transition: 'all 0.3s ease'
-          }}>
-            Get Involved
-          </button>
-          <button style={{
-            backgroundColor: 'white',
-            color: '#FF69B4',
-            border: '2px solid #FF69B4',
-            padding: '15px 30px',
-            fontSize: '1.2rem',
-            borderRadius: '10px',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease'
-          }}>
-            Learn More
-          </button>
+          <Link href="/admin/login">
+            <button style={{
+              backgroundColor: '#FF69B4',
+              color: 'white',
+              fontSize: '1.2rem',
+              padding: '15px 30px',
+              border: 'none',
+              borderRadius: '10px',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              boxShadow: '0 4px 10px rgba(255, 105, 180, 0.3)',
+              transition: 'transform 0.2s'
+            }}
+            onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
+            onMouseOut={(e) => e.target.style.transform = 'scale(1)'}>
+              Admin Login
+            </button>
+          </Link>
+          <Link href="/scan">
+            <button style={{
+              backgroundColor: '#4169E1',
+              color: 'white',
+              fontSize: '1.2rem',
+              padding: '15px 30px',
+              border: 'none',
+              borderRadius: '10px',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              boxShadow: '0 4px 10px rgba(65, 105, 225, 0.3)',
+              transition: 'transform 0.2s'
+            }}
+            onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
+            onMouseOut={(e) => e.target.style.transform = 'scale(1)'}>
+              Member Scan
+            </button>
+          </Link>
         </div>
       </main>
-      <footer style={{
-        marginTop: '50px',
-        color: '#666',
-        textAlign: 'center'
-      }}>
-        <p>© 2025 Breast Cancer Hope Initiative | Spreading Hope & Awareness</p>
-      </footer>
     </div>
-  );
+  )
 }
