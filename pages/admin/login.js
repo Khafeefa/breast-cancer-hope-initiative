@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import styles from '../../styles/Home.module.css';
 
 export default function AdminLogin() {
   const [password, setPassword] = useState('');
@@ -22,9 +21,9 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className={styles.container}>
-      <main className={styles.main}>
-        <h1 className={styles.title}>Admin Login</h1>
+    <div style={{ minHeight: '100vh', padding: '0 0.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+      <main style={{ padding: '5rem 0', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+        <h1 style={{ margin: 0, lineHeight: 1.15, fontSize: '4rem', textAlign: 'center' }}>Admin Login</h1>
         
         <form onSubmit={handleSubmit} style={{ marginTop: '2rem' }}>
           <div style={{ marginBottom: '1rem' }}>
