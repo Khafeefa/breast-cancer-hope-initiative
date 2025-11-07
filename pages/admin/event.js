@@ -31,7 +31,7 @@ export default function AdminEvent() {
       const { data, error } = await supabase
         .from('events')
         .select('*')
-        .order('start_time', { ascending: true });
+        .order('start_at', { ascending: true });
       if (error) throw error;
       setEvents(data || []);
     } catch (error) {
@@ -50,8 +50,8 @@ export default function AdminEvent() {
           {
             title,
             location,
-            start_time: startTime,
-            end_time: endTime,
+            start_at: startTime,
+            end_at: endTime,
           },
         ])
         .select();
@@ -297,7 +297,7 @@ export default function AdminEvent() {
             {events.map(event => (
               <li key={event.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, background: '#ffe4ed', borderRadius: 10, padding: 12 }}>
                 <span>
-                  <b>{event.title}</b> (<span>{new Date(event.start_time).toLocaleString()}</span>)
+                  <b>{event.title}</b> (<span>{new Date(event.start_at).toLocaleString()}</span>)
                 </span>
                 <button
                   onClick={() => handleDelete(event.id)}
@@ -352,7 +352,7 @@ export default function AdminEvent() {
               <option value="">-- Select an event --</option>
               {events.map(event => (
                 <option key={event.id} value={event.id}>
-                  {event.title} - {new Date(event.start_time).toLocaleDateString()}
+                  {event.title} - {new Date(event.start_at).toLocaleDateString()}
                 </option>
               ))}
             </select>
