@@ -50,8 +50,8 @@ export default function AdminEvent() {
           {
             title,
             location,
-            sstart_at: startTime ? new Date(startTime).toISOString() : null,
-            eend_at: endTime ? new Date(endTime).toISOString() : null,
+            start_at: startTime ? new Date(startTime).toISOString() : null,
+            end_at: endTime ? new Date(endTime).toISOString() : null,
           },
         ])
         .select();
