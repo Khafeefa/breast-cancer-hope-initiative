@@ -94,8 +94,7 @@ export default function AdminEvent() {
     setGeneratingQr(true);
     setMessage('');
     try {
-      const event = events.find(e => e.id === parseInt(selectedEvent));
-      if (!event) throw new Error('Event not found');
+    const event = events.find(e => String(e.id) === String(selectedEvent));      if (!event) throw new Error('Event not found');
       const eventUrl = `${window.location.origin}/event/${event.id}`;
       const qrDataUrl = await QRCode.toDataURL(eventUrl, {
         width: 300,
@@ -116,8 +115,7 @@ export default function AdminEvent() {
 
   const downloadQRCode = () => {
     if (!qrCodeUrl) return;
-    const event = events.find(e => e.id === parseInt(selectedEvent));
-    const link = document.createElement('a');
+    const event = events.find(e => String(e.id) === String(selectedEvent));    const link = document.createElement('a');
     link.href = qrCodeUrl;
     link.download = `${event?.title.replace(/\s+/g, '_')}_QR.png`;
     document.body.appendChild(link);
