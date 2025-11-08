@@ -44,6 +44,11 @@ export default function AdminEvent() {
     setLoading(true);
     setMessage('');
     try {
+          if (!title || !location || !startTime || !endTime) {
+      setMessage('Please fill in all fields');
+      setLoading(false);
+      return;
+    }
       const { data, error } = await supabase
         .from('events')
         .insert([
